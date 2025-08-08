@@ -11,24 +11,26 @@ const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const handleLogin = async (values: {
-    username: string;
-    password: string;
-  }) => {
+
+  const handleLogin = async (values: { username: string; password: string }) => {
     setError(null);
     try {
       const res = await login(values).unwrap();
+
+      // Save to localStorage
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("user", JSON.stringify(res.user));
+
+      // Update Redux state
       dispatch(setUser(res));
 
-      // Show toast success with server message or fallback
       toast.success("Login successful!");
 
-      // Redirect based on user role from response user object
       const userRole = res?.user?.role;
       if (userRole) {
         navigate(`/${userRole}/dashboard`, { replace: true });
       } else {
-        navigate("/dashboard", { replace: true }); // fallback
+        navigate("/dashboard", { replace: true });
       }
     } catch (err: any) {
       setError(err?.data?.message || "Login failed");

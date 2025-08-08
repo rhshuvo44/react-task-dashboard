@@ -10,23 +10,23 @@ export const adminPaths = [
     type: "divider",
   },
 
-  //   {
-  //     name: "Travel Allowance",
-  //     children: [
-  //       {
-  //         name: "Add Travel Allowance",
-  //         path: "add_travel_allowance",
-  //         element: <TravellingAllowanceForm />,
-  //       },
-  //       {
-  //         path: "travel_allowance/:id",
-  //         element: <TravellingAllowanceUpdate />,
-  //       },
-  //       {
-  //         name: "All Travel Allowance",
-  //         path: "all_travel_allowance",
-  //         element: <TravellingAllowance />,
-  //       },
-  //     ],
-  //   },
+  {
+    name: "Articles",
+    children: [
+      {
+        name: "Add Article",
+        path: "add_article",
+        element: "<ArticleForm />",
+      },
+      {
+        path: "article/:id",
+        element: "<ArticleUpdate />",
+      },
+      {
+        name: "All Articles",
+        path: "all_articles",
+        element: "<ArticlesList />",
+      },
+    ],
+  },
 ];
