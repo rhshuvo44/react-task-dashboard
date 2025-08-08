@@ -1,3 +1,4 @@
+import Articles from "../pages/Articles/Articles";
 import Dashboard from "../pages/Dashboard";
 
 export const adminPaths = [
@@ -25,7 +26,7 @@ export const adminPaths = [
       {
         name: "All Articles",
         path: "all_articles",
-        element: "<ArticlesList />",
+        element: <Articles />,
       },
     ],
   },

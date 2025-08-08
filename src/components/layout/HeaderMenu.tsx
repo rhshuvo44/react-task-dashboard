@@ -63,7 +63,6 @@ const HeaderMenu = () => {
       </Flex>
     </Menu>
   );
-  // console.log(badge);
 
   return (
     <Header
