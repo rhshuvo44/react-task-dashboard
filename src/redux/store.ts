@@ -12,6 +12,7 @@ import {
 import storage from 'redux-persist/lib/storage';
 import { baseApi } from './api/api';
 import authReducer from './features/auth/authSlice';
+import performanceReducer from './features/performance/performanceSlice';
 
 const persistConfig = {
     key: 'auth',
@@ -21,8 +22,8 @@ const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 export const store = configureStore({
     reducer: {
         [baseApi.reducerPath]: baseApi.reducer,
-
         auth: persistedAuthReducer,
+        performance: performanceReducer,
 
     },
     middleware: (getDefaultMiddleware) =>

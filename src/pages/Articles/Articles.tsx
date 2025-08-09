@@ -1,4 +1,4 @@
-import ArticlesTable from "../../components/articles/ArticlesTable";
+import ArticlesTable from "../../components/ui/ArticlesTable";
 
 const Articles = () => {
   return <ArticlesTable />;

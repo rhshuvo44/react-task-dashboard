@@ -1,8 +1,10 @@
+import PerformanceChart from "../components/ui/PerformanceChart";
+
 const Dashboard = () => {
   return (
     <div>
       <h2>Dashboard</h2>
-      <p>Welcome to your dashboard!</p>
+      <PerformanceChart />
     </div>
   );
 };

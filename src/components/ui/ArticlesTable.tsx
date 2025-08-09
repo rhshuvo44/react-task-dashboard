@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 
 import { userRole } from "../../constants/userRole";
 
-import Loading from "../ui/Loading";
-import SectionTitle from "../ui/SectionTitle";
+import Loading from "./Loading";
+import SectionTitle from "./SectionTitle";
 
 import type { Moment } from "moment";
 import moment from "moment";
