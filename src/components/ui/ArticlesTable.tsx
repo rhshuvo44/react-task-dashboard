@@ -112,26 +112,29 @@ const ArticlesTable = () => {
         size="small"
         columns={[
           ...articleColumns,
-          ...(user?.role === userRole.superAdmin ||
-          user?.role === userRole.ADMIN
+          ...(user?.role === userRole.ADMIN || user?.role === userRole.EDITOR
             ? [
                 {
                   title: "Action",
                   key: "action",
                   render: (item: TArticle) => (
                     <Space>
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          setSelectedArticle(item);
-                          setModalOpen(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      {user.role === userRole.ADMIN && (
-                        <Button danger>Delete</Button>
-                      )}
+                      {/* Both Admin and Editor can edit */}
+                      {user?.role === userRole.ADMIN ||
+                      user?.role === userRole.EDITOR ? (
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            setSelectedArticle(item);
+                            setModalOpen(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      ) : null}
+
+                      {/* Only Admin can delete */}
+                      {user?.role === "admin" && <Button danger>Delete</Button>}
                     </Space>
                   ),
                 },

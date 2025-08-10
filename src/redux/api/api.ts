@@ -22,7 +22,7 @@ let mockArticles = [
     },
 ];
 
-// Simulate delay
+
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export const baseApi = createApi({
@@ -33,14 +33,35 @@ export const baseApi = createApi({
         // LOGIN
         if (method === "POST" && url === "/auth/login") {
             const { username, password } = body;
+
             if (username === "admin" && password === "password") {
                 return {
                     data: {
                         token: "mock-token-admin",
-                        user: { userId: "1", role: "admin", iat: Date.now(), exp: Date.now() + 3600 * 1000 },
+                        user: {
+                            userId: "1",
+                            role: "admin",
+                            iat: Date.now(),
+                            exp: Date.now() + 3600 * 1000,
+                        },
                     },
                 };
             }
+
+            if (username === "editor" && password === "password") {
+                return {
+                    data: {
+                        token: "mock-token-editor",
+                        user: {
+                            userId: "2",
+                            role: "editor",
+                            iat: Date.now(),
+                            exp: Date.now() + 3600 * 1000,
+                        },
+                    },
+                };
+            }
+
             return { error: { status: 401, data: { message: "Invalid credentials" } } };
         }
 

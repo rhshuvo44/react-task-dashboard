@@ -31,7 +31,7 @@ export const EditArticleModal = ({
     }
     try {
       await updateArticle({
-        id: Number(formData.id), // Ensure number type
+        id: Number(formData.id), 
         title: formData.title,
         content: formData.content,
         status: formData.status,

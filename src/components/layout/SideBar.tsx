@@ -18,6 +18,9 @@ const SideBar = () => {
     case userRole.ADMIN:
       sidebarItems = sidebarItemsGenerator(adminPaths, userRole.ADMIN);
       break;
+    case userRole.EDITOR:
+      sidebarItems = sidebarItemsGenerator(adminPaths, userRole.EDITOR);
+      break;
 
     default:
       break;
@@ -53,7 +56,9 @@ const SideBar = () => {
     >
       <div className="m-5">
         {/* <img src={logo} alt="logo" /> */}
-        <Link className="text-white text-4xl" to="/">DashTask</Link>
+        <Link className="text-white text-4xl" to="/">
+          DashTask
+        </Link>
       </div>
       <Menu
         openKeys={openKeys}

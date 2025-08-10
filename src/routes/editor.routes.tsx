@@ -1,7 +1,7 @@
 import Articles from "../pages/Articles/Articles";
 import Dashboard from "../pages/Dashboard";
 
-export const adminPaths = [
+export const editorPaths = [
   {
     name: "Dashboard",
     path: "dashboard",
