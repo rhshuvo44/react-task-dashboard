@@ -1,22 +1,22 @@
-import { Button, Input, message, Modal, Select } from "antd";
+import { Button, Input, Modal, Select } from "antd";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useUpdateArticleMutation } from "../../redux/api/api";
+import type { TArticle } from "../../types/tableType";
 
 const { Option } = Select;
 
 interface EditArticleModalProps {
   open: boolean;
   onClose: () => void;
-  article: {
-    id: string;
-    title: string;
-    content: string;
-    status: string;
-    [key: string]: any;
-  };
+  article: TArticle;
 }
 
-export const EditArticleModal = ({ open, onClose, article }) => {
+export const EditArticleModal = ({
+  open,
+  onClose,
+  article,
+}: EditArticleModalProps) => {
   const [formData, setFormData] = useState(article || {});
   const [updateArticle] = useUpdateArticleMutation();
 
@@ -26,15 +26,20 @@ export const EditArticleModal = ({ open, onClose, article }) => {
 
   const handleSave = async () => {
     if (!formData.title?.trim() || !formData.content?.trim()) {
-      message.error("Title and Content are required");
+      toast.error("Title and Content are required");
       return;
     }
     try {
-      await updateArticle(formData).unwrap();
-      message.success("Article updated successfully!");
+      await updateArticle({
+        id: Number(formData.id), // Ensure number type
+        title: formData.title,
+        content: formData.content,
+        status: formData.status,
+      }).unwrap();
+      toast.success("Article updated successfully!");
       onClose();
     } catch {
-      message.error("Failed to update article");
+      toast.error("Failed to update article");
     }
   };
 

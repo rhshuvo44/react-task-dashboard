@@ -6,4 +6,6 @@ export type TArticle = {
     views: number;
     likes: number;
     comments: number;
+    content?: string;
+    status?: string;
 }
