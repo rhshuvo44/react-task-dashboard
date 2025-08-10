@@ -3,10 +3,10 @@ import PerformanceChart from "../components/ui/PerformanceChart";
 
 const Dashboard = () => {
   return (
-    <div>
-      <ArticlesTable />
+    <>
       <PerformanceChart />
-    </div>
+      <ArticlesTable />
+    </>
   );
 };
 

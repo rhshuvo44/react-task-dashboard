@@ -1,4 +1,3 @@
-
 import { Card, Radio } from "antd";
 import moment from "moment";
 import { useEffect } from "react";
@@ -19,6 +18,7 @@ import {
 } from "../../redux/features/performance/performanceSlice";
 import type { RootState } from "../../redux/store";
 import type { TArticle } from "../../types/tableType";
+import { filterArticles } from "../../utils/filterArticles";
 
 const PerformanceChart = () => {
   const dispatch = useDispatch();
@@ -30,23 +30,10 @@ const PerformanceChart = () => {
   useEffect(() => {
     if (!articles) return;
 
-    const filtered = articles.filter((a: TArticle) => {
-      const matchesAuthor = filters.authorFilter
-        ? a.author.toLowerCase().includes(filters.authorFilter.toLowerCase())
-        : true;
-      const matchesTitle = filters.searchTitle
-        ? a.title.toLowerCase().includes(filters.searchTitle.toLowerCase())
-        : true;
-      const matchesDate =
-        filters.dateRange && filters.dateRange[0] && filters.dateRange[1]
-          ? moment(a.publishedDate).isBetween(
-              moment(filters.dateRange[0]),
-              moment(filters.dateRange[1]),
-              undefined,
-              "[]"
-            )
-          : true;
-      return matchesAuthor && matchesTitle && matchesDate;
+    // ✅ Reuse the same filtering logic as the table
+    const filtered = filterArticles(articles, {
+      ...filters,
+      dateRange: filters.dateRange === null ? undefined : filters.dateRange,
     });
 
     const groupedData: Record<string, number> = {};
@@ -57,8 +44,7 @@ const PerformanceChart = () => {
           ? moment(article.publishedDate).format("YYYY-MM-DD")
           : moment(article.publishedDate).format("YYYY-MM");
 
-      if (!groupedData[dateKey]) groupedData[dateKey] = 0;
-      groupedData[dateKey] += article.views;
+      groupedData[dateKey] = (groupedData[dateKey] || 0) + article.views;
     });
 
     const chartData = Object.entries(groupedData)

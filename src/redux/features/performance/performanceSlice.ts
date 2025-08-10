@@ -1,22 +1,8 @@
 
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { FilterState, PerformanceData, PerformanceState } from "../../../types/sliceTypes";
 
-interface FilterState {
-  authorFilter: string;
-  searchTitle: string;
-  dateRange: [string | null, string | null] | null;
-}
 
-interface PerformanceData {
-  date: string;
-  views: number;
-}
-
-interface PerformanceState {
-  viewType: "daily" | "monthly";
-  data: PerformanceData[];
-  filters: FilterState;
-}
 
 const initialState: PerformanceState = {
   viewType: "daily",
