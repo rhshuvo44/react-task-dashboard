@@ -47,7 +47,7 @@ const HeaderMenu = () => {
 
   return (
     <Header
-      style={{ position: "sticky", top: 0, zIndex: 1, width: "100%" }}
+      style={{ position: "sticky", top: 0, zIndex: 99, width: "100%" }}
       className="flex items-center gap-1 md:gap-5 justify-between"
     >
       <div className="flex items-center md:px-8 text-white justify-center">

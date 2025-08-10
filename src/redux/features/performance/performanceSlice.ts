@@ -1,5 +1,11 @@
-// src/store/performanceSlice.ts
+
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+
+interface FilterState {
+  authorFilter: string;
+  searchTitle: string;
+  dateRange: [string | null, string | null] | null;
+}
 
 interface PerformanceData {
   date: string;
@@ -9,31 +15,34 @@ interface PerformanceData {
 interface PerformanceState {
   viewType: "daily" | "monthly";
   data: PerformanceData[];
+  filters: FilterState;
 }
 
 const initialState: PerformanceState = {
   viewType: "daily",
-  data: [
-    { date: "2025-08-01", views: 120 },
-    { date: "2025-08-02", views: 150 },
-    { date: "2025-08-03", views: 90 },
-    { date: "2025-08-04", views: 200 },
-    { date: "2025-08-05", views: 170 }
-  ]
+  data: [],
+  filters: {
+    authorFilter: "",
+    searchTitle: "",
+    dateRange: null,
+  },
 };
 
 const performanceSlice = createSlice({
   name: "performance",
   initialState,
   reducers: {
-    setViewType: (state, action: PayloadAction<"daily" | "monthly">) => {
+    setViewType(state, action: PayloadAction<"daily" | "monthly">) {
       state.viewType = action.payload;
     },
-    setData: (state, action: PayloadAction<PerformanceData[]>) => {
+    setData(state, action: PayloadAction<PerformanceData[]>) {
       state.data = action.payload;
-    }
-  }
+    },
+    updateFilter(state, action: PayloadAction<Partial<FilterState>>) {
+      state.filters = { ...state.filters, ...action.payload };
+    },
+  },
 });
 
-export const { setViewType, setData } = performanceSlice.actions;
+export const { setViewType, setData, updateFilter } = performanceSlice.actions;
 export default performanceSlice.reducer;

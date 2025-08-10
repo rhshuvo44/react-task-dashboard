@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
   {
     path: "/editor",
     element: (
-      <ProtectedRoute role={userRole.editor}>
+      <ProtectedRoute role={userRole.EDITOR}>
         <App />
       </ProtectedRoute>
     ),

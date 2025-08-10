@@ -1,75 +1,112 @@
 import { Button, DatePicker, Input, Space, Table } from "antd";
-
-import { useMemo, useState } from "react";
-
+import dayjs, { type Dayjs } from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+import debounce from "lodash.debounce";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { userRole } from "../../constants/userRole";
-
-import Loading from "./Loading";
-import SectionTitle from "./SectionTitle";
-
-import type { Moment } from "moment";
-import moment from "moment";
-import { useSelector } from "react-redux";
 import { useGetArticlesQuery } from "../../redux/api/api";
+import { updateFilter } from "../../redux/features/performance/performanceSlice";
 import type { RootState } from "../../redux/store";
 import { articleColumns } from "../../types/tableColum";
 import type { TArticle } from "../../types/tableType";
 import { EditArticleModal } from "../modal/EditArticleModal";
+import Loading from "./Loading";
+import SectionTitle from "./SectionTitle";
+dayjs.extend(isBetween);
 
 const { RangePicker } = DatePicker;
 
 const ArticlesTable = () => {
-  const { data, isError, isLoading } = useGetArticlesQuery(undefined);
-  //   const [deleteLoan] = useDeleteLoanMutation();
-  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
+  const filters = useSelector((state: RootState) => state.performance.filters);
+  const { data, isLoading, isError } = useGetArticlesQuery(undefined);
+
   const [selectedArticle, setSelectedArticle] = useState<TArticle | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  // Filter states
-  const [authorFilter, setAuthorFilter] = useState<string>("");
+
+  // Local controlled states for inputs
+  const [authorFilter, setAuthorFilter] = useState(filters.authorFilter);
+  const [searchTitle, setSearchTitle] = useState(filters.searchTitle);
   const [dateRange, setDateRange] = useState<
-    [Moment | null, Moment | null] | null
-  >(null);
-  const [searchTitle, setSearchTitle] = useState<string>("");
+    [Dayjs | null, Dayjs | null] | null
+  >(
+    filters.dateRange
+      ? [dayjs(filters.dateRange[0]), dayjs(filters.dateRange[1])]
+      : null
+  );
+
+  // Debounced dispatch for author filter
+  const debouncedSetAuthorFilter = debounce((value: string) => {
+    dispatch(updateFilter({ authorFilter: value }));
+  }, 300);
+
+  // Debounced dispatch for search title
+  const debouncedSetSearchTitle = debounce((value: string) => {
+    dispatch(updateFilter({ searchTitle: value }));
+  }, 300);
+
+  const onAuthorFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthorFilter(e.target.value);
+    debouncedSetAuthorFilter(e.target.value);
+  };
+
+  const onSearchTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTitle(e.target.value);
+    debouncedSetSearchTitle(e.target.value);
+  };
+
+  const onDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
+    setDateRange(dates);
+    if (!dates) {
+      dispatch(updateFilter({ dateRange: null }));
+    } else {
+      dispatch(
+        updateFilter({
+          dateRange: [
+            dates[0]?.toISOString() ?? null,
+            dates[1]?.toISOString() ?? null,
+          ],
+        })
+      );
+    }
+  };
+
+  // Filter data based on Redux filters (to keep consistent with PerformanceChart)
+  const filteredData = data
+    ? data.filter((item: TArticle) => {
+        const matchesAuthor = filters.authorFilter
+          ? item.author
+              .toLowerCase()
+              .includes(filters.authorFilter.toLowerCase())
+          : true;
+        const matchesTitle = filters.searchTitle
+          ? item.title.toLowerCase().includes(filters.searchTitle.toLowerCase())
+          : true;
+        const matchesDate =
+          filters.dateRange && filters.dateRange[0] && filters.dateRange[1]
+            ? dayjs(item.publishedDate).isBetween(
+                dayjs(filters.dateRange[0]),
+                dayjs(filters.dateRange[1]),
+                undefined,
+                "[]"
+              )
+            : true;
+        return matchesAuthor && matchesTitle && matchesDate;
+      })
+    : [];
 
   // Pagination state
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const pageSize = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
 
-  // Filter & Search logic
-  const filteredData = useMemo<TArticle[]>(() => {
-    if (!data) return [];
-
-    return data.filter((item: TArticle) => {
-      const matchesAuthor = authorFilter
-        ? item.author.toLowerCase().includes(authorFilter.toLowerCase())
-        : true;
-
-      const matchesTitle = searchTitle
-        ? item.title.toLowerCase().includes(searchTitle.toLowerCase())
-        : true;
-
-      const matchesDate =
-        dateRange && dateRange[0] && dateRange[1]
-          ? moment(item.publishedDate).isBetween(
-              dateRange[0],
-              dateRange[1],
-              undefined,
-              "[]"
-            )
-          : true;
-
-      return matchesAuthor && matchesTitle && matchesDate;
-    });
-  }, [data, authorFilter, searchTitle, dateRange]);
-
-  if (isLoading) return <Loading />;
-  if (isError) return <div>Error loading data</div>;
-
-  // Pagination slice
   const paginatedData = filteredData.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
+
+  if (isLoading) return <Loading />;
+  if (isError) return <div>Error loading data</div>;
 
   return (
     <div>
@@ -79,28 +116,20 @@ const ArticlesTable = () => {
           <Input
             placeholder="Search by title"
             value={searchTitle}
-            onChange={(e) => setSearchTitle(e.target.value)}
+            onChange={onSearchTitleChange}
             allowClear
             style={{ width: 200 }}
           />
           <Input
             placeholder="Filter by author"
             value={authorFilter}
-            onChange={(e) => setAuthorFilter(e.target.value)}
+            onChange={onAuthorFilterChange}
             allowClear
             style={{ width: 200 }}
           />
           <RangePicker
-            onChange={(dates) =>
-              setDateRange(
-                dates
-                  ? [
-                      dates[0] ? moment(dates[0].toDate()) : null,
-                      dates[1] ? moment(dates[1].toDate()) : null,
-                    ]
-                  : null
-              )
-            }
+            onChange={onDateRangeChange}
+            value={dateRange}
             allowEmpty={[true, true]}
             style={{ width: 250 }}
           />
@@ -112,16 +141,14 @@ const ArticlesTable = () => {
         size="small"
         columns={[
           ...articleColumns,
-          ...(user?.role === userRole.ADMIN || user?.role === userRole.EDITOR
+          ...(userRole.ADMIN || userRole.EDITOR
             ? [
                 {
                   title: "Action",
                   key: "action",
                   render: (item: TArticle) => (
                     <Space>
-                      {/* Both Admin and Editor can edit */}
-                      {user?.role === userRole.ADMIN ||
-                      user?.role === userRole.EDITOR ? (
+                      {(userRole.ADMIN || userRole.EDITOR) && (
                         <Button
                           type="primary"
                           onClick={() => {
@@ -131,10 +158,8 @@ const ArticlesTable = () => {
                         >
                           Edit
                         </Button>
-                      ) : null}
-
-                      {/* Only Admin can delete */}
-                      {user?.role === "admin" && <Button danger>Delete</Button>}
+                      )}
+                      {userRole.ADMIN && <Button danger>Delete</Button>}
                     </Space>
                   ),
                 },
@@ -151,6 +176,7 @@ const ArticlesTable = () => {
           showSizeChanger: false,
         }}
       />
+
       {selectedArticle && (
         <EditArticleModal
           open={modalOpen}

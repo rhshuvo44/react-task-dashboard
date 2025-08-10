@@ -1,9 +1,10 @@
+import ArticlesTable from "../components/ui/ArticlesTable";
 import PerformanceChart from "../components/ui/PerformanceChart";
 
 const Dashboard = () => {
   return (
     <div>
-      <h2>Dashboard</h2>
+      <ArticlesTable />
       <PerformanceChart />
     </div>
   );

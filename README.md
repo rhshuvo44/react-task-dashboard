@@ -1,69 +1,131 @@
-# React + TypeScript + Vite
+# React Task Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**A responsive admin dashboard for managing and analyzing articles.**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Live Demo
 
-## Expanding the ESLint configuration
+[View the deployed site](https://react-task-dashboard-dusky.vercel.app)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Features
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Core Functionality
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+* **Articles Dashboard**
+
+  * Displays a list of articles with **Title**, **Author**, **Published Date**, **Views**, **Likes**, and **Comments**.
+  * Supports **filtering** by author and date range.
+  * Includes **search input** for filtering articles by title (case-insensitive).
+  * **Sorting** enabled for views, likes, and comments.
+  * Supports **pagination** for handling large datasets.
+
+* **Performance Visualization**
+
+  * Displays article view counts on a **line or bar chart** using Recharts or Chart.js.
+  * Can toggle between **daily** and **monthly** views.
+  * Automatically updates based on the applied filters.
+
+* **Edit Article Modal**
+
+  * Opens a modal to edit article **Title**, **Content**, and **Status** (Published / Draft).
+  * Includes basic **form validation** for required fields.
+  * Saves changes via a mock or local API and shows a success message upon completion.
+
+### Bonus (Implemented)
+
+* **React Context API** (or Redux Toolkit Query) for state management.
+* **Debounced filters** to improve table performance.
+* **Fake login system**, storing a token in localStorage.
+* **Role-based UI logic** (`admin` vs `editor`) for conditional rendering of actions.
+
+---
+
+## Project Structure
+
+```text
+src/
+  components/
+    ArticlesTable.tsx
+    PerformanceChart.tsx
+    EditArticleModal.tsx
+    FilterPanel.tsx
+  context/ or store/
+    ArticlesContext.tsx
+    AuthContext.tsx or RTK store slices
+  pages/
+    Login.tsx
+    Dashboard.tsx
+  api/
+    baseApi.ts (mock API implementation with RTK Query)
+  App.tsx
+  main.tsx
+public/
+README.md
+vite.config.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Tech Stack
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+* **Framework**: React (with TypeScript)
+* **Bundler**: Vite
+* **UI Library**: Ant Design
+* **Charts**: Recharts or Chart.js
+* **State Management**: Redux 
+* **Routing**: React Router
+* **Styles**: Tailwind CSS 
+
+---
+
+## Setup & Run
+
+```bash
+# Clone the repository
+git clone https://github.com/rhshuvo44/react-task-dashboard.git
+cd react-task-dashboard
+
+# Install dependencies
+npm install
+
+# Run in development mode
+npm run dev
+
+# Build for production
+npm run build
 ```
+
+---
+
+## Usage Guide
+
+1. **Login screen**: Use `admin/password` or `editor/password` to log in.
+2. After login, you'll land on the **Dashboard**:
+
+   * Use filters and search to narrow down articles.
+   * Click table headers to sort.
+3. Edit an article:
+
+   * Click **Edit** → modify fields (status editable for admin only).
+   * Click **Save** — data persists via the mock API.
+4. **Performance Chart** updates based on filter selections and range mode (daily/monthly).
+5. **Role-based behavior**:
+
+   * **Admin**: Can edit, change status, and delete articles.
+   * **Editor**: Can edit but cannot change status or delete.
+   * Guests/read-only: Limited access.
+
+---
+
+---
+
+## License
+
+This project is open source—feel free to explore, use, and contribute!
+
+---
+
+Let me know if you’d like me to structure different sections or tailor this further for clarity or branding!
