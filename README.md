@@ -40,33 +40,7 @@
 * **Debounced filters** to improve table performance.
 * **Fake login system**, storing a token in localStorage.
 * **Role-based UI logic** (`admin` vs `editor`) for conditional rendering of actions.
-
----
-
-## Project Structure
-
-```text
-src/
-  components/
-    ArticlesTable.tsx
-    PerformanceChart.tsx
-    EditArticleModal.tsx
-    FilterPanel.tsx
-  context/ or store/
-    ArticlesContext.tsx
-    AuthContext.tsx or RTK store slices
-  pages/
-    Login.tsx
-    Dashboard.tsx
-  api/
-    baseApi.ts (mock API implementation with RTK Query)
-  App.tsx
-  main.tsx
-public/
-README.md
-vite.config.ts
-```
-
+ 
 ---
 
 ## Tech Stack
