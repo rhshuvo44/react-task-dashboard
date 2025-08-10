@@ -1,7 +1,6 @@
 import { Button, DatePicker, Input, Space, Table } from "antd";
 
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 
 import { userRole } from "../../constants/userRole";
 
@@ -15,6 +14,7 @@ import { useGetArticlesQuery } from "../../redux/api/api";
 import type { RootState } from "../../redux/store";
 import { articleColumns } from "../../types/tableColum";
 import type { TArticle } from "../../types/tableType";
+import { EditArticleModal } from "../modal/EditArticleModal";
 
 const { RangePicker } = DatePicker;
 
@@ -22,6 +22,8 @@ const ArticlesTable = () => {
   const { data, isError, isLoading } = useGetArticlesQuery(undefined);
   //   const [deleteLoan] = useDeleteLoanMutation();
   const user = useSelector((state: RootState) => state.auth.user);
+  const [selectedArticle, setSelectedArticle] = useState<TArticle | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   // Filter states
   const [authorFilter, setAuthorFilter] = useState<string>("");
   const [dateRange, setDateRange] = useState<
@@ -118,7 +120,15 @@ const ArticlesTable = () => {
                   key: "action",
                   render: (item: TArticle) => (
                     <Space>
-                      <Link to={`/${user.role}/article/${item.id}`}>Edit</Link>
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          setSelectedArticle(item);
+                          setModalOpen(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
                       {user.role === userRole.ADMIN && (
                         <Button danger>Delete</Button>
                       )}
@@ -138,6 +148,13 @@ const ArticlesTable = () => {
           showSizeChanger: false,
         }}
       />
+      {selectedArticle && (
+        <EditArticleModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          article={selectedArticle}
+        />
+      )}
     </div>
   );
 };
